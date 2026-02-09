@@ -32,7 +32,7 @@ Le MVP doit couvrir **tous les criteres du bareme principal** avant tout bonus :
 | **BLOC 2 - Auth** | 0:30-1:00 | Middleware, routes, ClerkProvider, layout | 10 pts |
 | **BLOC 3 - CRUD** | 1:00-1:45 | Server Actions (5 fonctions), formulaires | 23 pts |
 | **BLOC 4 - UI** | 1:45-2:30 | Pages (dashboard, add, explore, home), stats | 27 pts |
-| **BLOC 5 - Polish** | 2:30-2:50 | Responsive, feedback visuel, cohérence | 10 pts |
+| **BLOC 5 - Polish** | 2:30-2:50 | Responsive, feedback visuel, coherence | 10 pts |
 | **BLOC 6 - Git** | 2:50-3:00 | Commits finaux, README, verification | 3 pts |
 
 ---
@@ -63,7 +63,7 @@ src/
     GameForm.tsx            # Formulaire ajout/edition
   lib/
     prisma.ts               # Client Prisma singleton
-  middleware.ts              # Middleware Clerk
+  proxy.ts                   # Middleware Clerk (Next.js 16)
 prisma/
   schema.prisma              # Schema avec Game, enums
 .env                         # Variables d'environnement
@@ -75,21 +75,21 @@ prisma/
 
 ### BLOC 1 -- Setup (0:00 - 0:30) [17 pts]
 
-- [ ] **1.1** Creer projet Next.js 14+ avec TypeScript + Tailwind + App Router
-- [ ] **1.2** Initialiser Git + premier commit
-- [ ] **1.3** Installer Prisma + configurer connexion Neon PostgreSQL
+- [x] **1.1** Creer projet Next.js 14+ avec TypeScript + Tailwind + App Router
+- [x] **1.2** Initialiser Git + premier commit
+- [x] **1.3** Installer Prisma + configurer connexion Neon PostgreSQL
 - [x] **1.4** Ecrire schema.prisma (enums GameStatus, Platform + model Game)
-- [ ] **1.5** Executer `prisma generate` + `prisma db push`
+- [x] **1.5** Executer `prisma migrate dev` (migration init)
 - [ ] **1.6** Creer `src/lib/prisma.ts` (client singleton)
-- [ ] **1.7** Installer + configurer Clerk (env vars, ClerkProvider)
+- [x] **1.7** Installer + configurer Clerk (env vars, ClerkProvider frFR)
 - [ ] **1.8** Commit : "feat: setup projet + prisma + clerk"
 
 ### BLOC 2 -- Authentification Clerk (0:30 - 1:00) [15 pts]
 
-- [ ] **2.1** Configurer `middleware.ts` (routes publiques : /, /sign-in, /sign-up, /explore)
+- [x] **2.1** Configurer `proxy.ts` (middleware Clerk) -- MANQUE: protection routes /dashboard
 - [ ] **2.2** Creer page `/sign-in/[[...sign-in]]/page.tsx`
 - [ ] **2.3** Creer page `/sign-up/[[...sign-up]]/page.tsx`
-- [ ] **2.4** Layout global : ClerkProvider avec localisation frFR
+- [x] **2.4** Layout global : ClerkProvider avec localisation frFR
 - [ ] **2.5** Navbar : SignedIn, SignedOut, UserButton, liens navigation
 - [ ] **2.6** Verifier : routes protegees redirigent bien vers sign-in
 - [ ] **2.7** Commit : "feat: authentification Clerk complete"
@@ -137,13 +137,13 @@ prisma/
 
 | Bloc | Statut | Progression |
 |------|--------|-------------|
-| BLOC 1 - Setup | EN ATTENTE | 0% |
-| BLOC 2 - Auth | EN ATTENTE | 0% |
+| BLOC 1 - Setup | EN COURS | 75% |
+| BLOC 2 - Auth | EN COURS | 30% |
 | BLOC 3 - CRUD | EN ATTENTE | 0% |
 | BLOC 4 - UI | EN ATTENTE | 0% |
 | BLOC 5 - Polish | EN ATTENTE | 0% |
 | BLOC 6 - Final | EN ATTENTE | 0% |
-| **TOTAL** | **EN ATTENTE** | **0%** |
+| **TOTAL** | **EN COURS** | **~18%** |
 
 ---
 
@@ -151,15 +151,18 @@ prisma/
 
 | Heure | Action | Resultat |
 |-------|--------|----------|
-| -- | PLAN.md cree | Plan pret, en attente de validation |
-| -- | schema.prisma complete | Enums + model Game conformes au bareme |
-| -- | En attente du setup coequipier | Next.js + Tailwind + Clerk en cours d'install par teammate |
+| -- | PLAN.md cree | Plan pret |
+| -- | schema.prisma complete | Enums + model Game conformes |
+| -- | Next.js + Prisma + Clerk installes | Setup de base fonctionnel |
+| -- | prisma migrate dev --name init | Migration appliquee sur Neon |
+| -- | layout.tsx avec ClerkProvider frFR | Localisation francaise OK |
+| -- | proxy.ts cree (middleware Clerk) | En attente: protection routes |
 
 ---
 
 ## 8. Points critiques avant remise
 
-- [ ] Schema Prisma conforme au modele impose (enums + model exact)
+- [x] Schema Prisma conforme au modele impose (enums + model exact)
 - [ ] Middleware Clerk protege /dashboard et /dashboard/add
 - [ ] Les 5 Server Actions fonctionnent correctement
 - [ ] auth() utilise partout sauf getPublicGames
@@ -174,7 +177,8 @@ prisma/
 
 ## 9. Decisions techniques
 
-- **Prisma singleton** : pattern standard pour eviter les connexions multiples en dev
+- **Prisma 7** : utilise `prisma-client` provider + `prisma.config.ts` pour la connexion
+- **proxy.ts** : remplace middleware.ts dans Next.js 16+
 - **Server Actions** : utilisation de `"use server"` dans un fichier dedie
 - **Formulaires** : composants client avec `useFormStatus` pour feedback
 - **Filtres explore** : query params URL pour filtrage cote serveur
